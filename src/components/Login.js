@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import Header from "./Header";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebase";
+
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Please enter email"),
@@ -16,10 +19,46 @@ const validationSchema = Yup.object().shape({
 
 const Login = () => {
     const [isSignInForm, setIsSignInForm] = useState(true);
+    const [isError, setIsError] = useState('')
 
     const toggleSignInForm = () => {
         setIsSignInForm(!isSignInForm);
     };
+
+    const handleFormSubmit = (values) => {
+        if (isSignInForm) {
+            signInWithEmailAndPassword(auth, values.email, values.password)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    console.log(user)
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setIsError(errorCode + '-' + errorMessage)
+                    setTimeout(() => {
+                        setIsError('')
+                    }, 5000);
+                });
+
+        }
+        else if (!isSignInForm)
+            createUserWithEmailAndPassword(auth, values.email, values.password)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    console.log(user)
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setIsError(errorCode + '-' + errorMessage)
+                    setTimeout(() => {
+                        setIsError('')
+                    }, 5000);
+                });
+    }
 
     return (
         <div>
@@ -32,7 +71,7 @@ const Login = () => {
                     initialValues={{ name: "", email: "", password: "" }}
                     validationSchema={validationSchema}
                     onSubmit={(values, { resetForm }) => {
-                        console.log(values);
+                        handleFormSubmit(values)
                         resetForm();
                     }}
                 >
@@ -70,6 +109,7 @@ const Login = () => {
                                 />
                                 <ErrorMessage name="password" component="div" className="text-md text-red-500" />
                             </div>
+                            {isError && <p className="text-md text-red-500 my-2">{isError}</p>}
                             <button
                                 type="submit"
                                 className="w-full p-2 my-7 rounded-md bg-red-600 "
