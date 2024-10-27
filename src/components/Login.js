@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import Header from "./Header";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 
 const validationSchema = Yup.object().shape({
@@ -20,6 +23,8 @@ const validationSchema = Yup.object().shape({
 const Login = () => {
     const [isSignInForm, setIsSignInForm] = useState(true);
     const [isError, setIsError] = useState('')
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const toggleSignInForm = () => {
         setIsSignInForm(!isSignInForm);
@@ -29,9 +34,8 @@ const Login = () => {
         if (isSignInForm) {
             signInWithEmailAndPassword(auth, values.email, values.password)
                 .then((userCredential) => {
-                    // Signed in 
                     const user = userCredential.user;
-                    console.log(user)
+                   navigate('/browse')
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -49,6 +53,21 @@ const Login = () => {
                     // Signed up 
                     const user = userCredential.user;
                     console.log(user)
+                    updateProfile(user, {
+                        displayName: "Nishant", photoURL: process.env.REACT_APP_USER_AVATAR
+                    }).then(() => {
+                        console.log(user)
+                        const { uid, email, displayName, photoURL } = auth.currentUser
+                        dispatch(addUser({ uid, email, displayName, photoURL }))
+                        navigate('/browse')
+                    }).catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        setIsError(errorCode + '-' + errorMessage)
+                        setTimeout(() => {
+                            setIsError('')
+                        }, 5000);
+                    });
                 })
                 .catch((error) => {
                     const errorCode = error.code;
