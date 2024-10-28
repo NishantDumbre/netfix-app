@@ -29,7 +29,7 @@ const Header = () => {
     }
 
     return (
-        <div className='absolute w-screen px-8 py-2 flex justify-between'>
+        <div className='absolute w-screen px-8 py-2 flex justify-between z-20 bg-gradient-to-b from black'>
             <img src={process.env.REACT_APP_LOGO}
                 className='w-40' alt='logo' />
             {user && <div className='flex items-center' >
