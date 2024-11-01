@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { addUser, removeUser } from '../utils/userSlice'
 import { auth } from '../utils/firebase'
+import {LOGO} from '../utils/constants'
 
 const Header = () => {
     const user = useSelector(store => store.user)
@@ -29,8 +30,8 @@ const Header = () => {
     }
 
     return (
-        <div className='absolute w-screen px-8 py-2 flex justify-between z-20 bg-gradient-to-b from black'>
-            <img src={process.env.REACT_APP_LOGO}
+        <div className='absolute w-screen px-8 py-2 flex justify-between z-20 bg-gradient-to-b from-black'>
+            <img src={LOGO}
                 className='w-40' alt='logo' />
             {user && <div className='flex items-center' >
                 <img alt='profile pic' className='h-12 w-12' src={user?.photoURL} />

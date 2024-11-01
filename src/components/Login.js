@@ -7,6 +7,7 @@ import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { USER_AVATAR } from "../utils/constants";
 
 
 const validationSchema = Yup.object().shape({
@@ -54,7 +55,7 @@ const Login = () => {
                     const user = userCredential.user;
                     console.log(user)
                     updateProfile(user, {
-                        displayName: "Nishant", photoURL: process.env.REACT_APP_USER_AVATAR
+                        displayName: "Nishant", photoURL: USER_AVATAR
                     }).then(() => {
                         console.log(user)
                         const { uid, email, displayName, photoURL } = auth.currentUser
