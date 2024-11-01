@@ -11,7 +11,7 @@ import { changeLanguage } from "../utils/configSlice";
 const Header = () => {
     const user = useSelector((store) => store.user);
     const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
-    const langRef = useRef("en");
+    const langRef = useRef(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 

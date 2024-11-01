@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addPopularMovies } from "../utils/moviesSlice";
 import axios from "axios";
+import { TMDB_API_TOKEN } from "../utils/constants";
 
 // custom hook to import popular movies list from TMDB
 const useNowPlayingMovies = () => {
     const dispatch = useDispatch();
+    const popularMovies = useSelector(store=>store.movies.popularMovies)
     const getNowPlayingMovies = async () => {
         try {
             const request = await axios.get(
@@ -13,7 +15,7 @@ const useNowPlayingMovies = () => {
                 {
                     headers: {
                         accept: "application/json",
-                        Authorization: process.env.REACT_APP_TMDB_API_TOKEN,
+                        Authorization: TMDB_API_TOKEN
                     },
                 }
             );
@@ -24,7 +26,7 @@ const useNowPlayingMovies = () => {
     };
 
     useEffect(() => {
-        getNowPlayingMovies();
+        !popularMovies && getNowPlayingMovies();
     }, []);
 };
 
